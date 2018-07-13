@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+  lead = {nome: 'Leonardo Sobral', telefone: '21967026543', idade: 39, imc: 21};
 }
