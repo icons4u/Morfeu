@@ -21,11 +21,13 @@
 
   <div class="row">
 
+
+    <!-- RESUMO -->
+
     <div class="col-md-4 order-md-2 mb-4">
 
       <h4 class="d-flex justify-content-between align-items-center mb-3">
         <span class="text-muted">Resumo</span>
-        <span class="badge badge-secondary badge-pill">3</span>
       </h4>
 
       <ul class="list-group mb-3">
@@ -41,61 +43,44 @@
             <h6 class="my-0">IMC</h6>
             <small class="text-muted"></small>
           </div>
-          <span class="text-muted">{{lead.imc}}</span>
+          <span class="text-muted">{{lead.imc | number: '1.2-2'}}</span>
         </li>
-        <!--li class="list-group-item d-flex justify-content-between lh-condensed">
-          <div>
-            <h6 class="my-0">Third item</h6>
-            <small class="text-muted">Brief description</small>
-          </div>
-          <span class="text-muted">$5</span>
-        </li--->
         <li class="list-group-item d-flex justify-content-between bg-light">
-          <div class="text-success">
+          <div [ngClass]="{'text-danger':(lead.status === 'NÃO APTO'),'text-success':(lead.status === 'APTO')}">
             <h6 class="my-0">Status</h6>
             <small></small>
           </div>
-          <span class="text-success">APTO</span>
+          <span [ngClass]="{'text-danger':(lead.status === 'NÃO APTO'),'text-success':(lead.status === 'APTO')}">{{lead.status}}</span>
         </li>
-        <!--li class="list-group-item d-flex justify-content-between">
-          <span>Total (USD)</span>
-          <strong>$20</strong>
-        </li-->
       </ul>
 
     </div>
 
 
+    <!-- QUESTIONARIO -->
+
     <div class="col-md-8 order-md-1">
 
-      <h4 class="mb-3">{{lead.nome}} - {{lead.telefone}}</h4>
+      <h3 class="mb-3">{{lead.nome}}</h3>
+      <h5 class="mb-3">{{lead.telefone}} - {{lead.telefone2}} - {{lead.celular}}</h5>
 
       <form class="needs-validation" novalidate>
 
         <div class="row">
 
           <div class="col-md-4 mb-3">
-            <label for="firstName">Data de Nascimento</label>
-            <input type="date" class="form-control" id="firstName" placeholder="" value="" required>
-            <div class="invalid-feedback">
-              Campo obrigatório
-            </div>
+            <label>Data de Nascimento</label>
+            <input type="date" class="form-control" [(ngModel)]="lead.nascimento" (change)="calcIdade(lead.nascimento)" [ngModelOptions]="{standalone: true}" required/>
           </div>
 
           <div class="col-md-4 mb-3">
-            <label for="firstName">Altura</label>
-            <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
-            <div class="invalid-feedback">
-              Campo obrigatório
-            </div>
+            <label>Altura</label>
+            <input type="text" class="form-control" [(ngModel)]="lead.altura" placeholder="em cm" (change)="calcIMC()" [ngModelOptions]="{standalone: true}" required>
           </div>
 
           <div class="col-md-4 mb-3">
-            <label for="lastName">Peso</label>
-            <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
-            <div class="invalid-feedback">
-              Campo obrigatório
-            </div>
+            <label>Peso</label>
+            <input type="text" class="form-control" [(ngModel)]="lead.peso" placeholder="em kg" (change)="calcIMC()" [ngModelOptions]="{standalone: true}" required>
           </div>
 
         </div>
@@ -104,78 +89,76 @@
         <hr class="mb-4">
 
 
-        <h4 class="mb-3">Possui Insônia a mais de 3 meses?</h4>
+        <h5 class="mb-3">Possui Insônia a mais de 3 meses?</h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="insonia" type="radio" [(ngModel)]="lead.insonia" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="insonia" type="radio" [(ngModel)]="lead.insonia" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Não</label>
           </div>
         </div>
 
         <h5 class="mb-3">Dificuldade para iniciar o sono?</h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="iniciar_sono" type="radio" [(ngModel)]="lead.iniciar_sono" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="iniciar_sono" type="radio" [(ngModel)]="lead.iniciar_sono" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Não</label>
           </div>
         </div>
 
-        <h5 class="mb-3">Dificuldade para manter o sono?</h5>
+        <p class="mb-3">Dificuldade para manter o sono?</p>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="manter_sono" type="radio" [(ngModel)]="lead.manter_sono" value="false" [ngModelOptions]="{standalone: true}">
+            <label>Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="manter_sono" type="radio" [(ngModel)]="lead.manter_sono" value="false" [ngModelOptions]="{standalone: true}">
+            <label>Não</label>
           </div>
         </div>
 
-        <h5 class="mb-3">Desperta antes do horário habitual?</h5>
+        <p class="mb-3">Desperta antes do horário habitual?</p>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="despertar_antes" type="radio" [(ngModel)]="lead.despertar_antes" value="false" [ngModelOptions]="{standalone: true}">
+            <label>Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="email">Horário habitual do participante ir para a cama dormir:</label>
-          <input type="email" class="form-control" id="email" placeholder="21:00">
-          <div class="invalid-feedback">
-            Campo obrigatório
+          <div>
+            <input name="despertar_antes" type="radio" [(ngModel)]="lead.despertar_antes" value="false" [ngModelOptions]="{standalone: true}">
+            <label>Não</label>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="address">Possui alguma doença?</label>
-          <input type="text" class="form-control" id="address" placeholder="Lista de doenças" required>
-          <div class="invalid-feedback">
-            Campo obrigatório
-          </div>
+          <label>Horário habitual do participante ir para a cama dormir:</label>
+          <input type="text" class="form-control" placeholder="21:00">
         </div>
 
         <div class="mb-3">
-          <label for="address2">Quais medicamentos faz uso no momento?</label>
-          <input type="text" class="form-control" id="address2" placeholder="Lista de medicamentos">
+          <label>Possui alguma doença?</label>
+          <input type="text" class="form-control" placeholder="Lista de doenças" required>
         </div>
+
+        <div class="mb-3">
+          <label>Quais medicamentos faz uso no momento?</label>
+          <input type="text" class="form-control" placeholder="Lista de medicamentos">
+        </div>
+
+
+        <hr class="mb-4">
+
 
         <h5 class="mb-3">Utilizou betabloqueadores, medicamentos psicoativos ou com efeito sedativo, tais como,
           mas não se limitando a antidepressivos, sedativos, antiepiléticos, hipnóticos, antipsicóticos,
@@ -184,17 +167,17 @@
         </h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="usou_medicamento" type="radio" [(ngModel)]="lead.usou_medicamento" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="usou_medicamento" type="radio" [(ngModel)]="lead.usou_medicamento" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Não</label>
           </div>
         </div>
 
-        <p>
+        <p style="font-style: italic;">
           Alguns exemplos de medicamentos proibidos: Clonazepam, Zolpidem, Fluoxetina, Dramin, Rivotril,
           Ciclobenzaprina, amitriptilina, Mirtazapina (Remeron), Citalopan, Sertralina, Valium, Propanolol.
         </p>
@@ -204,34 +187,17 @@
 
 
         <h5 class="mb-3">
-          Diagnóstico de doenças clínicas que interfiram no sono, como dores crônicas, noctúria, hipotireoidismo,
-          hipertireoidismo, cardiopatias graves, doenças neurológicas e psiquiátricas graves a critério do investigador?
-        </h5>
-
-        <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
-          </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
-          </div>
-        </div>
-
-
-        <h5 class="mb-3">
           Diagnóstico diabetes e seja insulinodependente?
         </h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="diabetes" type="radio" [(ngModel)]="lead.diabetes" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="diabetes" type="radio" [(ngModel)]="lead.diabetes" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Não</label>
           </div>
         </div>
 
@@ -241,13 +207,13 @@
         </h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="apneia" type="radio" [(ngModel)]="lead.apneia" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="apneia" type="radio" [(ngModel)]="lead.apneia" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Não</label>
           </div>
         </div>
 
@@ -256,13 +222,13 @@
         </h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="trabalha_noite" type="radio" [(ngModel)]="lead.trabalha_noite" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="trabalha_noite" type="radio" [(ngModel)]="lead.trabalha_noite" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Não</label>
           </div>
         </div>
 
@@ -272,13 +238,13 @@
         </h5>
 
         <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Sim</label>
+          <div>
+            <input name="alcool_drogas" type="radio" [(ngModel)]="lead.alcool_drogas" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Sim</label>
           </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Não</label>
+          <div>
+            <input name="alcool_drogas" type="radio" [(ngModel)]="lead.alcool_drogas" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Não</label>
           </div>
         </div>
 
@@ -287,13 +253,13 @@
 
 
         <div class="mb-3">
-          <label for="email">Observação:</label>
-          <textarea class="form-control" id="email"></textarea>
+          <label>Observação:</label>
+          <textarea class="form-control"></textarea>
         </div>
 
         <hr class="mb-4">
 
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Salvar informações</button>
+        <button class="btn btn-primary btn-lg btn-block" type="button" (click)="saveLead()">Salvar informações</button>
 
       </form>
 

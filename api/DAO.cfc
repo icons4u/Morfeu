@@ -12,10 +12,8 @@
 
   <!--- PACIENTE --->
 
-  <cffunction name="addUsuario" access="remote" output="false" returnformat="plain" returntype="string">
+  <cffunction name="editLead" access="remote" output="false" returnformat="plain" returntype="string">
 
-    <cfargument name="person_name" type="string"/>
-    <cfargument name="person_email" type="string"/>
     <cfargument name="token" type="string" default=""/>
 
     <cfset returnObject = CreateObject("component", "ReturnObject")/>
@@ -28,35 +26,77 @@
     </cfif>
 
     <cftry>
-      <cfquery name="qInsertUser" result="queryResult">
-        INSERT INTO projeto_caua.tb_person_user
-        (person_name, person_email, password)
-        VALUES
-        (
-        <cfqueryparam cfsqltype="cf_sql_varchar" value="#ARGUMENTS.person_name#"/>,
-        <cfqueryparam cfsqltype="cf_sql_varchar" value="#ARGUMENTS.person_email#"/>,
-        <cfqueryparam cfsqltype="cf_sql_varchar" value="1234"/>
-        )
-      </cfquery>
-    <cfset returnObject["data"] = true/>
-    <cfcatch type="any">
-      <cfset returnObject["status"]["mensagem"] = "Erro ao inserir usuário"/>
-      <cfset returnObject["status"]["erro"] = true/>
-      <cfset returnObject["status"]["codErro"] = 500/>
-    </cfcatch>
+      <cfset VARIABLES.POST = deserializeJSON(ToString(getHTTPRequestData().content)) />
+      <cfset VARIABLES.lead_id = VARIABLES.POST.lead_id/>
+      <cfset VARIABLES.status = VARIABLES.POST.status/>
+      <cfset VARIABLES.nascimento = VARIABLES.POST.nascimento/>
+      <cfset VARIABLES.peso = VARIABLES.POST.peso/>
+      <cfset VARIABLES.altura = VARIABLES.POST.altura/>
+      <cfset VARIABLES.imc = VARIABLES.POST.imc/>
+      <cfset VARIABLES.insonia = VARIABLES.POST.insonia/>
+      <cfset VARIABLES.iniciar_sono = VARIABLES.POST.iniciar_sono/>
+      <cfset VARIABLES.manter_sono = VARIABLES.POST.manter_sono/>
+      <cfset VARIABLES.despertar_antes = VARIABLES.POST.despertar_antes/>
+      <cfset VARIABLES.horario_dormir = VARIABLES.POST.horario_dormir/>
+      <cfset VARIABLES.doenca = VARIABLES.POST.doenca/>
+      <cfset VARIABLES.medicamentos = VARIABLES.POST.medicamentos/>
+      <cfset VARIABLES.usou_medicamento = VARIABLES.POST.usou_medicamento/>
+      <cfset VARIABLES.diabetes = VARIABLES.POST.diabetes/>
+      <cfset VARIABLES.apneia = VARIABLES.POST.apneia/>
+      <cfset VARIABLES.trabalha_noite = VARIABLES.POST.trabalha_noite/>
+      <cfset VARIABLES.imc_alto = VARIABLES.POST.imc_alto/>
+      <cfset VARIABLES.alcool_drogas = VARIABLES.POST.alcool_drogas/>
+      <cfset VARIABLES.interesse = VARIABLES.POST.interesse/>
+      <cfset VARIABLES.observacoes = VARIABLES.POST.observacoes/>
+      <cfcatch type="any">
+        <cfset vo = CreateObject("component", "ReturnObject")/>
+        <cfset vo["status"]["mensagem"] = "Dados incorretos, não consegui gravar."/>
+        <cfset vo["status"]["erro"] = true/>
+        <cfreturn SerializeJSON(vo)/>
+      </cfcatch>
     </cftry>
+
+    <!---cftry--->
+      <cfquery name="qUpdate" result="queryResult">
+        UPDATE ache.tb_morfeu_lead as lead
+        SET
+        status = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.status#"/>,
+        data_contato = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#"/>,
+        nascimento = <cfqueryparam cfsqltype="cf_sql_date" value="#VARIABLES.nascimento#"/>,
+        peso = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.peso#"/>,
+        altura = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.altura#"/>,
+        imc = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.imc#"/>,
+        <cfif Len(trim(VARIABLES.insonia)) GT 0>insonia = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.insonia)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.iniciar_sono)) GT 0>iniciar_sono = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.iniciar_sono)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.manter_sono)) GT 0>manter_sono = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.manter_sono)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.despertar_antes)) GT 0>despertar_antes = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.despertar_antes)#"/>,</cfif>
+        horario_dormir = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.horario_dormir#"/>,
+        doenca = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.doenca#"/>,
+        medicamentos = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.medicamentos#"/>,
+        <cfif Len(trim(VARIABLES.usou_medicamento)) GT 0>usou_medicamento = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.usou_medicamento)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.diabetes)) GT 0>diabetes = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.diabetes)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.apneia)) GT 0>apneia = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.apneia)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.trabalha_noite)) GT 0>trabalha_noite = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.trabalha_noite)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.imc_alto)) GT 0>imc_alto = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.imc_alto)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.alcool_drogas)) GT 0>alcool_drogas = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.alcool_drogas)#"/>,</cfif>
+        <cfif Len(trim(VARIABLES.interesse)) GT 0>interesse = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.interesse)#"/>,</cfif>
+        observacoes = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.observacoes#"/>
+        WHERE lead_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#VARIABLES.lead_id#"/>
+      </cfquery>
+      <cfset returnObject["data"] = true/>
+      <!---cfcatch type="any">
+        <cfset returnObject["status"]["mensagem"] = "Erro ao alterar lead"/>
+        <cfset returnObject["status"]["erro"] = true/>
+        <cfset returnObject["status"]["codErro"] = 500/>
+      </cfcatch>
+    </cftry--->
 
     <cfreturn SerializeJSON(returnObject)/>
 
   </cffunction>
 
-  <cffunction name="editUsuario" access="remote" output="false" returnformat="plain" returntype="string">
+  <cffunction name="getLead" access="remote" output="false" returnformat="plain" returntype="string">
 
-    <cfargument name="person_name" type="string"/>
-    <cfargument name="birth_date" type="date"/>
-    <cfargument name="gender" type="string"/>
-    <cfargument name="intervention_id" type="numeric"/>
-    <cfargument name="user_id" type="numeric" default="5"/>
     <cfargument name="token" type="string" default=""/>
 
     <cfset returnObject = CreateObject("component", "ReturnObject")/>
@@ -68,65 +108,43 @@
       <cfreturn SerializeJSON(returnObject)/>
     </cfif>
 
-    <cfquery name="qPaciente">
-      SELECT paciente.*, inte.intervention_id
-      FROM projeto_caua.tb_intervention inte
-      INNER JOIN projeto_caua.tb_person_patient paciente ON inte.person_id = paciente.person_id
-      WHERE paciente.active = true
-      AND inte.intervention_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#ARGUMENTS.intervention_id#"/>;
+    <cfquery name="qRetorno">
+        SELECT lead.*
+        FROM ache.tb_morfeu_lead as lead
+        WHERE lead.status IS NULL
+        LIMIT 1;
     </cfquery>
 
-    <cftry>
-      <cfquery name="qUpdatePatient">
-        UPDATE projeto_caua.tb_person_patient
-        SET person_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ARGUMENTS.person_name#"/>,
-        birth_date = <cfqueryparam cfsqltype="cf_sql_date" value="#ARGUMENTS.birth_date#"/>,
-        gender = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ARGUMENTS.gender#"/>
-        WHERE person_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#qPaciente.person_id#"/>;
-      </cfquery>
-    <cfset returnObject["data"] = true/>
-    <cfcatch type="any">
-      <cfset returnObject["status"]["mensagem"] = "Erro ao editar intervenção"/>
-      <cfset returnObject["status"]["erro"] = true/>
-      <cfset returnObject["status"]["codErro"] = 500/>
-    </cfcatch>
-    </cftry>
-
-    <cfreturn SerializeJSON(returnObject)/>
-
-  </cffunction>
-
-  <cffunction name="getUsuarios" access="remote" output="false" returnformat="plain" returntype="string">
-
-    <cfargument name="institution_id" type="numeric" default="1"/>
-    <cfargument name="token" type="string" default=""/>
-
-    <cfset returnObject = CreateObject("component", "ReturnObject")/>
-
-    <cfif ARGUMENTS.token NEQ "jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23">
-      <cfset returnObject["status"]["mensagem"] = "Token invalido"/>
-      <cfset returnObject["status"]["erro"] = true/>
-      <cfset returnObject["status"]["codErro"] = 99/>
-      <cfreturn SerializeJSON(returnObject)/>
-    </cfif>
-
-    <cfquery name="qRetorno" cachedwithin="#CreateTimeSpan(0, 0, 1, 0)#">
-            SELECT usr.*
-            FROM projeto_caua.tb_person_user as usr
-            WHERE usr.active = true
-            ORDER BY usr.person_name;
-        </cfquery>
-
     <cfif qRetorno.recordCount>
-      <cfset arrayVO = ArrayNew(1)/>
-      <cfloop query="qRetorno">
         <cfset obj = CreateObject("component", "Objeto")/>
-        <cfset obj["person_id"] = qRetorno.person_id/>
-        <cfset obj["person_name"] = qRetorno.person_name/>
-        <cfset obj["person_email"] = qRetorno.person_email/>
-        <cfset arrayVO[CurrentRow] = obj/>
-      </cfloop>
-      <cfset returnObject["data"] = arrayVO/>
+        <cfset obj["lead_id"] = qRetorno.lead_id/>
+        <cfset obj["telefone"] = qRetorno.telefone/>
+        <cfset obj["status"] = qRetorno.status/>
+        <cfset obj["data_contato"] = qRetorno.data_contato/>
+        <cfset obj["nome"] = qRetorno.nome/>
+        <cfset obj["nascimento"] = qRetorno.nascimento/>
+        <cfset obj["peso"] = qRetorno.peso/>
+        <cfset obj["altura"] = qRetorno.altura/>
+        <cfset obj["imc"] = qRetorno.imc/>
+        <cfset obj["telefone"] = qRetorno.telefone/>
+        <cfset obj["telefone2"] = qRetorno.telefone2/>
+        <cfset obj["celular"] = qRetorno.celular/>
+        <cfset obj["insonia"] = qRetorno.insonia/>
+        <cfset obj["iniciar_sono"] = qRetorno.iniciar_sono/>
+        <cfset obj["manter_sono"] = qRetorno.manter_sono/>
+        <cfset obj["despertar_antes"] = qRetorno.despertar_antes/>
+        <cfset obj["horario_dormir"] = qRetorno.horario_dormir/>
+        <cfset obj["doenca"] = qRetorno.doenca/>
+        <cfset obj["medicamentos"] = qRetorno.medicamentos/>
+        <cfset obj["usou_medicamento"] = qRetorno.usou_medicamento/>
+        <cfset obj["diabetes"] = qRetorno.diabetes/>
+        <cfset obj["apneia"] = qRetorno.apneia/>
+        <cfset obj["trabalha_noite"] = qRetorno.trabalha_noite/>
+        <cfset obj["imc_alto"] = qRetorno.imc_alto/>
+        <cfset obj["alcool_drogas"] = qRetorno.alcool_drogas/>
+        <cfset obj["interesse"] = qRetorno.interesse/>
+        <cfset obj["observacoes"] = qRetorno.observacoes/>
+        <cfset returnObject["data"] = obj/>
     <cfelse>
       <cfset returnObject["status"]["mensagem"] = "Dados Inexistentes"/>
       <cfset returnObject["status"]["erro"] = true/>
