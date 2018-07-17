@@ -13,21 +13,31 @@
 
 <body class="bg-light">
 
-<div class="container">
-  <div class="py-5 text-center">
-    <img class="d-block mx-auto mb-4" src="../assets/logo.jpg" alt="" width="102" height="102">
-    <h2>Projeto Morfeu</h2>
-  </div>
+<div class="container" style="padding-top: 20px;">
 
   <div class="row">
 
 
     <!-- RESUMO -->
 
-    <div class="col-md-4 order-md-2 mb-4">
+    <div class="col-md-4 order-md-1 mb-4" style="background-color: #dddddd;">
+
+      <br/>
+
+      <h3 class="mb-3">Projeto Morfeu</h3>
+
+      <h4 class="mb-3">{{lead.nome}}</h4>
+      <p class="mb-3">Cel: {{lead.celular}}</p>
+      <p class="mb-3">Res: {{lead.telefone}}</p>
+      <p class="mb-3">Com: {{lead.telefone2}}</p>
+
+      <button class="btn btn-default btn-block" type="button" (click)="nextLead()">Próximo lead</button>
+
+      <hr class="mb-4">
 
       <h4 class="d-flex justify-content-between align-items-center mb-3">
         <span class="text-muted">Resumo</span>
+        <span class="badge badge-secondary badge-pill">{{statusStage}}</span>
       </h4>
 
       <ul class="list-group mb-3">
@@ -59,26 +69,39 @@
 
     <!-- QUESTIONARIO -->
 
-    <div class="col-md-8 order-md-1">
-
-      <h3 class="mb-3">{{lead.nome}}</h3>
-      <h5 class="mb-3">{{lead.telefone}} - {{lead.telefone2}} - {{lead.celular}}</h5>
+    <div class="col-md-8 order-md-2">
 
       <form class="needs-validation" novalidate>
 
-        <div class="row">
+        <h4 class="mb-3">Tem interesse em participar da pesquisa?</h4>
 
-          <div class="col-md-4 mb-3">
+        <div class="d-block my-3">
+          <div>
+            <input name="interesse" type="radio" [(ngModel)]="lead.interesse" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label>Sim</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <input name="interesse" type="radio" [(ngModel)]="lead.interesse" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+            <label class="text-danger">Não</label>
+          </div>
+        </div>
+
+
+        <hr class="mb-4" [hidden]="statusStage < 1">
+
+
+        <div class="row" [hidden]="statusStage < 1">
+
+          <div class="col-md-4 mb-3" [hidden]="statusStage < 1">
             <label>Data de Nascimento</label>
             <input type="date" class="form-control" [(ngModel)]="lead.nascimento" (change)="calcIdade(lead.nascimento)" [ngModelOptions]="{standalone: true}" required/>
           </div>
 
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4 mb-3" [hidden]="statusStage < 2">
             <label>Altura</label>
             <input type="text" class="form-control" [(ngModel)]="lead.altura" placeholder="em cm" (change)="calcIMC()" [ngModelOptions]="{standalone: true}" required>
           </div>
 
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4 mb-3" [hidden]="statusStage < 2">
             <label>Peso</label>
             <input type="text" class="form-control" [(ngModel)]="lead.peso" placeholder="em kg" (change)="calcIMC()" [ngModelOptions]="{standalone: true}" required>
           </div>
@@ -86,163 +109,154 @@
         </div>
 
 
-        <hr class="mb-4">
+        <hr class="mb-4" [hidden]="statusStage < 3">
 
 
-        <h5 class="mb-3">Possui Insônia a mais de 3 meses?</h5>
+        <h5 class="mb-3" [hidden]="statusStage < 3">Possui Insônia a mais de 3 meses?</h5>
 
-        <div class="d-block my-3">
-          <div>
+        <div class="d-block my-3" [hidden]="statusStage < 3">
+          <div [hidden]="statusStage < 3">
             <input name="insonia" type="radio" [(ngModel)]="lead.insonia" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="insonia" type="radio" [(ngModel)]="lead.insonia" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Não</label>
           </div>
         </div>
 
-        <h5 class="mb-3">Dificuldade para iniciar o sono?</h5>
+        <h5 class="mb-3" [hidden]="statusStage < 4">Dificuldade para iniciar o sono?</h5>
 
-        <div class="d-block my-3">
-          <div>
+        <div class="d-block my-3" [hidden]="statusStage < 4">
+          <div [hidden]="statusStage < 4">
             <input name="iniciar_sono" type="radio" [(ngModel)]="lead.iniciar_sono" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="iniciar_sono" type="radio" [(ngModel)]="lead.iniciar_sono" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Não</label>
           </div>
         </div>
 
-        <p class="mb-3">Dificuldade para manter o sono?</p>
+        <p class="mb-3" [hidden]="statusStage < 5">Dificuldade para manter o sono?</p>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="manter_sono" type="radio" [(ngModel)]="lead.manter_sono" value="false" [ngModelOptions]="{standalone: true}">
+        <div class="d-block my-3" [hidden]="statusStage < 5">
+          <div [hidden]="statusStage < 5">
+            <input name="manter_sono" type="radio" [(ngModel)]="lead.manter_sono" value="true" [ngModelOptions]="{standalone: true}">
             <label>Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="manter_sono" type="radio" [(ngModel)]="lead.manter_sono" value="false" [ngModelOptions]="{standalone: true}">
             <label>Não</label>
           </div>
         </div>
 
-        <p class="mb-3">Desperta antes do horário habitual?</p>
+        <p class="mb-3" [hidden]="statusStage < 5">Desperta antes do horário habitual?</p>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="despertar_antes" type="radio" [(ngModel)]="lead.despertar_antes" value="false" [ngModelOptions]="{standalone: true}">
+        <div class="d-block my-3" [hidden]="statusStage < 5">
+          <div [hidden]="statusStage < 5">
+            <input name="despertar_antes" type="radio" [(ngModel)]="lead.despertar_antes" value="true" [ngModelOptions]="{standalone: true}">
             <label>Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="despertar_antes" type="radio" [(ngModel)]="lead.despertar_antes" value="false" [ngModelOptions]="{standalone: true}">
             <label>Não</label>
           </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" [hidden]="statusStage < 5">
           <label>Horário habitual do participante ir para a cama dormir:</label>
-          <input type="text" class="form-control" placeholder="21:00">
+          <input type="text" class="form-control" placeholder="21:00" [(ngModel)]="lead.horario_dormir" [ngModelOptions]="{standalone: true}">
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" [hidden]="statusStage < 5">
           <label>Possui alguma doença?</label>
-          <input type="text" class="form-control" placeholder="Lista de doenças" required>
+          <input type="text" class="form-control" placeholder="Lista de doenças" [(ngModel)]="lead.doenca" [ngModelOptions]="{standalone: true}">
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" [hidden]="statusStage < 5">
           <label>Quais medicamentos faz uso no momento?</label>
-          <input type="text" class="form-control" placeholder="Lista de medicamentos">
+          <input type="text" class="form-control" placeholder="Lista de medicamentos" [(ngModel)]="lead.medicamentos" [ngModelOptions]="{standalone: true}">
         </div>
 
 
-        <hr class="mb-4">
+        <hr class="mb-4" [hidden]="statusStage < 5">
 
 
-        <h5 class="mb-3">Utilizou betabloqueadores, medicamentos psicoativos ou com efeito sedativo, tais como,
+        <h5 class="mb-3" [hidden]="statusStage < 5">Utilizou betabloqueadores, medicamentos psicoativos ou com efeito sedativo, tais como,
           mas não se limitando a antidepressivos, sedativos, antiepiléticos, hipnóticos, antipsicóticos,
           relaxantes musculares, anti-histamínicos de primeira geração (anti-alérgico),
           entre outros, nos últimos 30 dias anteriores à visita de triagem (V-1)?
         </h5>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="usou_medicamento" type="radio" [(ngModel)]="lead.usou_medicamento" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+        <div class="d-block my-3" [hidden]="statusStage < 5">
+          <div [hidden]="statusStage < 5">
+            <input name="usou_medicamento" type="radio" [(ngModel)]="lead.usou_medicamento" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="usou_medicamento" type="radio" [(ngModel)]="lead.usou_medicamento" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Não</label>
           </div>
         </div>
 
-        <p style="font-style: italic;">
+        <p style="font-style: italic;" [hidden]="statusStage < 6">
           Alguns exemplos de medicamentos proibidos: Clonazepam, Zolpidem, Fluoxetina, Dramin, Rivotril,
           Ciclobenzaprina, amitriptilina, Mirtazapina (Remeron), Citalopan, Sertralina, Valium, Propanolol.
         </p>
 
 
-        <hr class="mb-4">
+        <hr class="mb-4" [hidden]="statusStage < 6">
 
 
-        <h5 class="mb-3">
+        <h5 class="mb-3" [hidden]="statusStage < 6">
           Diagnóstico diabetes e seja insulinodependente?
         </h5>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="diabetes" type="radio" [(ngModel)]="lead.diabetes" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+        <div class="d-block my-3" [hidden]="statusStage < 6">
+          <div [hidden]="statusStage < 6">
+            <input name="diabetes" type="radio" [(ngModel)]="lead.diabetes" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="diabetes" type="radio" [(ngModel)]="lead.diabetes" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Não</label>
           </div>
         </div>
 
 
-        <h5 class="mb-3">
+        <h5 class="mb-3" [hidden]="statusStage < 7">
           Diagnóstico de Apneia do sono moderada a grave?
         </h5>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="apneia" type="radio" [(ngModel)]="lead.apneia" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+        <div class="d-block my-3" [hidden]="statusStage < 7">
+          <div [hidden]="statusStage < 7">
+            <input name="apneia" type="radio" [(ngModel)]="lead.apneia" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="apneia" type="radio" [(ngModel)]="lead.apneia" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Não</label>
           </div>
         </div>
 
-        <h5 class="mb-3">
+        <h5 class="mb-3" [hidden]="statusStage < 8">
           Trabalha durante a noite?
         </h5>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="trabalha_noite" type="radio" [(ngModel)]="lead.trabalha_noite" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+        <div class="d-block my-3" [hidden]="statusStage < 8">
+          <div [hidden]="statusStage < 8">
+            <input name="trabalha_noite" type="radio" [(ngModel)]="lead.trabalha_noite" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="trabalha_noite" type="radio" [(ngModel)]="lead.trabalha_noite" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Não</label>
           </div>
         </div>
 
 
-        <h5 class="mb-3">
+        <h5 class="mb-3" [hidden]="statusStage < 9">
           Uso abusivo de álcool ou drogas ilícitas?
         </h5>
 
-        <div class="d-block my-3">
-          <div>
-            <input name="alcool_drogas" type="radio" [(ngModel)]="lead.alcool_drogas" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
+        <div class="d-block my-3" [hidden]="statusStage < 9">
+          <div [hidden]="statusStage < 9">
+            <input name="alcool_drogas" type="radio" [(ngModel)]="lead.alcool_drogas" value="true" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label class="text-danger">Sim</label>
-          </div>
-          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <input name="alcool_drogas" type="radio" [(ngModel)]="lead.alcool_drogas" value="false" [ngModelOptions]="{standalone: true}" (change)="calcStatus()">
             <label>Não</label>
           </div>
@@ -254,7 +268,7 @@
 
         <div class="mb-3">
           <label>Observação:</label>
-          <textarea class="form-control"></textarea>
+          <textarea class="form-control" [(ngModel)]="lead.observacoes" [ngModelOptions]="{standalone: true}"></textarea>
         </div>
 
         <hr class="mb-4">
@@ -263,13 +277,13 @@
 
       </form>
 
+      <br clear="all"/>
+
     </div>
+
 
   </div>
 
-  <footer class="my-5 pt-5 text-muted text-center text-small">
-    <p class="mb-1">&copy; 2018 icons4u inc</p>
-  </footer>
 </div>
 
 

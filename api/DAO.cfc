@@ -12,7 +12,7 @@
 
   <!--- PACIENTE --->
 
-  <cffunction name="editLead" access="remote" output="false" returnformat="plain" returntype="string">
+  <cffunction name="nextLead" access="remote" output="false" returnformat="plain" returntype="string">
 
     <cfargument name="token" type="string" default=""/>
 
@@ -26,6 +26,51 @@
     </cfif>
 
     <cftry>
+      <cfset VARIABLES.POST = deserializeJSON(ToString(getHTTPRequestData().content)) />
+      <cfset VARIABLES.lead_id = VARIABLES.POST.lead_id/>
+      <cfset VARIABLES.observacoes = VARIABLES.POST.observacoes/>
+      <cfcatch type="any">
+        <cfset vo = CreateObject("component", "ReturnObject")/>
+        <cfset vo["status"]["mensagem"] = "Dados incorretos, não consegui gravar."/>
+        <cfset vo["status"]["erro"] = true/>
+        <cfreturn SerializeJSON(vo)/>
+      </cfcatch>
+    </cftry>
+
+    <!---cftry--->
+      <cfquery name="qUpdate" result="queryResult">
+        UPDATE ache.tb_morfeu_lead as lead
+        SET
+        data_contato = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#"/>,
+        observacoes = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.observacoes#"/>
+        WHERE lead_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#VARIABLES.lead_id#"/>
+      </cfquery>
+      <cfset returnObject["data"] = true/>
+      <!---cfcatch type="any">
+        <cfset returnObject["status"]["mensagem"] = "Erro ao alterar lead"/>
+        <cfset returnObject["status"]["erro"] = true/>
+        <cfset returnObject["status"]["codErro"] = 500/>
+      </cfcatch>
+    </cftry--->
+
+    <cfreturn SerializeJSON(returnObject)/>
+
+  </cffunction>
+
+  <cffunction name="editLead" access="remote" output="false" returnformat="plain" returntype="string">
+
+    <cfargument name="token" type="string" default=""/>
+
+    <cfset returnObject = CreateObject("component", "ReturnObject")/>
+
+    <cfif ARGUMENTS.token NEQ "jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23">
+      <cfset returnObject["status"]["mensagem"] = "Token invalido"/>
+      <cfset returnObject["status"]["erro"] = true/>
+      <cfset returnObject["status"]["codErro"] = 99/>
+      <cfreturn SerializeJSON(returnObject)/>
+    </cfif>
+
+    <!---cftry--->
       <cfset VARIABLES.POST = deserializeJSON(ToString(getHTTPRequestData().content)) />
       <cfset VARIABLES.lead_id = VARIABLES.POST.lead_id/>
       <cfset VARIABLES.status = VARIABLES.POST.status/>
@@ -48,13 +93,13 @@
       <cfset VARIABLES.alcool_drogas = VARIABLES.POST.alcool_drogas/>
       <cfset VARIABLES.interesse = VARIABLES.POST.interesse/>
       <cfset VARIABLES.observacoes = VARIABLES.POST.observacoes/>
-      <cfcatch type="any">
+      <!---cfcatch type="any">
         <cfset vo = CreateObject("component", "ReturnObject")/>
         <cfset vo["status"]["mensagem"] = "Dados incorretos, não consegui gravar."/>
         <cfset vo["status"]["erro"] = true/>
         <cfreturn SerializeJSON(vo)/>
       </cfcatch>
-    </cftry>
+    </cftry--->
 
     <!---cftry--->
       <cfquery name="qUpdate" result="queryResult">
@@ -112,6 +157,7 @@
         SELECT lead.*
         FROM ache.tb_morfeu_lead as lead
         WHERE lead.status IS NULL
+        ORDER BY data_contato DESC, lead_id
         LIMIT 1;
     </cfquery>
 
