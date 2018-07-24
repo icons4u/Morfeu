@@ -207,4 +207,69 @@
 
   </cffunction>
 
+  <cffunction name="getToReturnLeads" access="remote" output="false" returnformat="plain" returntype="string">
+
+    <cfargument name="token" type="string" default=""/>
+
+    <cfset returnObject = CreateObject("component", "ReturnObject")/>
+
+    <cfif ARGUMENTS.token NEQ "jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23">
+      <cfset returnObject["status"]["mensagem"] = "Token invalido"/>
+      <cfset returnObject["status"]["erro"] = true/>
+      <cfset returnObject["status"]["codErro"] = 99/>
+      <cfreturn SerializeJSON(returnObject)/>
+    </cfif>
+
+    <cfquery name="qRetorno">
+        SELECT lead.*
+        FROM ache.tb_morfeu_lead as lead
+        WHERE lead.observacoes ilike <cfqueryparam cfsqltype="cf_sql_varchar" value="%Retornar a ligação%"/>
+        ORDER BY data_contato DESC, lead_id
+        LIMIT 5;
+    </cfquery>
+
+    <cfif qRetorno.recordCount>
+      <cfset arrayVO = ArrayNew(1)/>
+      <cfloop query="qRetorno">
+      <cfset obj = CreateObject("component", "Objeto")/>
+        <cfset obj["lead_id"] = qRetorno.lead_id/>
+        <cfset obj["telefone"] = qRetorno.telefone/>
+        <cfset obj["status"] = qRetorno.status/>
+        <cfset obj["data_contato"] = qRetorno.data_contato/>
+        <cfset obj["nome"] = qRetorno.nome/>
+        <cfset obj["nascimento"] = qRetorno.nascimento/>
+        <cfset obj["peso"] = qRetorno.peso/>
+        <cfset obj["altura"] = qRetorno.altura/>
+        <cfset obj["imc"] = qRetorno.imc/>
+        <cfset obj["telefone"] = qRetorno.telefone/>
+        <cfset obj["telefone2"] = qRetorno.telefone2/>
+        <cfset obj["celular"] = qRetorno.celular/>
+        <cfset obj["insonia"] = qRetorno.insonia/>
+        <cfset obj["iniciar_sono"] = qRetorno.iniciar_sono/>
+        <cfset obj["manter_sono"] = qRetorno.manter_sono/>
+        <cfset obj["despertar_antes"] = qRetorno.despertar_antes/>
+        <cfset obj["horario_dormir"] = qRetorno.horario_dormir/>
+        <cfset obj["doenca"] = qRetorno.doenca/>
+        <cfset obj["medicamentos"] = qRetorno.medicamentos/>
+        <cfset obj["usou_medicamento"] = qRetorno.usou_medicamento/>
+        <cfset obj["diabetes"] = qRetorno.diabetes/>
+        <cfset obj["apneia"] = qRetorno.apneia/>
+        <cfset obj["trabalha_noite"] = qRetorno.trabalha_noite/>
+        <cfset obj["imc_alto"] = qRetorno.imc_alto/>
+        <cfset obj["alcool_drogas"] = qRetorno.alcool_drogas/>
+        <cfset obj["interesse"] = qRetorno.interesse/>
+        <cfset obj["observacoes"] = qRetorno.observacoes/>
+        <cfset arrayVO[CurrentRow] = obj/>
+      </cfloop>
+      <cfset returnObject["data"] = arrayVO/>
+    <cfelse>
+      <cfset returnObject["status"]["mensagem"] = "Dados Inexistentes"/>
+      <cfset returnObject["status"]["erro"] = true/>
+      <cfset returnObject["status"]["codErro"] = 1/>
+    </cfif>
+
+    <cfreturn SerializeJSON(returnObject)/>
+
+  </cffunction>
+
 </cfcomponent>

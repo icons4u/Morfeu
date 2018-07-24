@@ -9,6 +9,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 export class AppComponent  implements OnInit {
 
   lead: any = {status:''};
+  arrLeads: any = [];
   statusStage: number = 0;
 
   constructor(private http: HttpClient) {
@@ -17,6 +18,7 @@ export class AppComponent  implements OnInit {
 
   ngOnInit() {
     this.getLead();
+    this.getToReturnLeads();
   }
 
   calcIdade(nascimento) {
@@ -154,13 +156,24 @@ export class AppComponent  implements OnInit {
       });
   }
 
+  getToReturnLeads() {
+    this.http.get('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=getToReturnLeads&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23')
+      .subscribe(data => {
+        console.log(JSON.stringify(data));
+        if (!data['status'].erro) {
+          this.arrLeads = data['data'];
+        }
+      });
+  }
+
   saveLead() {
     const params = JSON.stringify(this.lead);
-    console.log(JSON.stringify(this.lead));
+    //console.log(JSON.stringify(this.lead));
     this.http.post('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=editLead&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23', params)
       .subscribe(data => {
         if (!data['status'].erro) {
           this.getLead();
+          this.getToReturnLeads();
         } else {
 
         }
@@ -174,9 +187,14 @@ export class AppComponent  implements OnInit {
       .subscribe(data => {
         if (!data['status'].erro) {
           this.getLead();
+          this.getToReturnLeads();
         } else {
 
         }
       });
+  }
+
+  setLead(lead) {
+    this.lead = lead;
   }
 }

@@ -17,6 +17,18 @@
 
   <div class="row">
 
+    <table class="table table-bordered table-hover table-sm">
+      <tr *ngFor="let lead of arrLeads; let i = index;" (click)="setLead(lead)">
+        <td>{{lead.nome}}</td>
+        <td>{{lead.observacoes}}</td>
+        <td>{{lead.data_contato | date: 'dd/MM'}}</td>
+      </tr>
+    </table>
+
+  </div>
+
+  <div class="row">
+
 
     <!-- RESUMO -->
 
