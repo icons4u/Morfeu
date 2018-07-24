@@ -1,13 +1,19 @@
 <cfquery name="qRetorno">
-  SELECT lead.*
+  SELECT COUNT(lead.lead_id) as total
   FROM ache.tb_morfeu_lead as lead
-  WHERE lead.status IS NOT NULL
-  ORDER BY data_contato DESC, lead_id
+  WHERE lead.status = 'APTO'
 </cfquery>
 
-<cfoutput>#qRetorno.recordcount# usuários completados</cfoutput>
+<p><cfoutput>#qRetorno.total# usuários APTOS</cfoutput></p>
 
-<cfdump var="#qRetorno#"/>
+<cfquery name="qRetorno">
+  SELECT COUNT(lead.lead_id) as total
+  FROM ache.tb_morfeu_lead as lead
+  WHERE lead.status = 'NÃO APTO'
+</cfquery>
+
+<p><cfoutput>#qRetorno.total# usuários NÃO APTOS</cfoutput></p>
+
 
 
 <cfquery name="qRetorno">
@@ -19,7 +25,7 @@
 
 <br/>
 
-<cfoutput>#qRetorno.recordcount# ligações feitas</cfoutput>
+<p><cfoutput>#qRetorno.recordcount# ligações feitas</cfoutput></p>
 
 
 <cfset relatorioName = "relatorioLeads" & LSDateFormat(Now(), "YYYY-MM-DD") & "_" & LSTimeFormat(Now(), "HH-MM")/>
