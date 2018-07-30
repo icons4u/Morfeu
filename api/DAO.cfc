@@ -157,15 +157,15 @@
     <cfquery name="qRetorno">
         SELECT lead.*
         FROM ache.tb_morfeu_lead as lead
-        WHERE lead.status IS NULL
-        ORDER BY data_contato DESC, lead_id
+        WHERE lead.status ilike 'tentar novamente'
+        ORDER BY lead.data_contato, lead.lead_id
         LIMIT 1;
     </cfquery>
-    <cfquery name="qUpdate" result="queryResult">
+    <!---cfquery name="qUpdate" result="queryResult">
       UPDATE ache.tb_morfeu_lead
       SET status = <cfqueryparam cfsqltype="cf_sql_varchar" value="ligando"/>
       WHERE lead_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#qRetorno.lead_id#"/>
-    </cfquery>
+    </cfquery--->
 
     <cfif qRetorno.recordCount>
         <cfset obj = CreateObject("component", "Objeto")/>
