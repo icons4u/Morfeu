@@ -25,7 +25,7 @@ export class AppComponent  implements OnInit {
     const dateNascimento = new Date(nascimento);
     const ageDifMs = Date.now() - dateNascimento.getTime();
     const ageDate = new Date(ageDifMs);
-    this.lead.idade = Math.abs(ageDate.getUTCFullYear() - 1970);
+    this.lead.idade = Math.ceil(ageDate.getUTCFullYear() - 1970);
     this.calcStatus();
   }
 
@@ -46,7 +46,7 @@ export class AppComponent  implements OnInit {
     this.statusStage = 1;
 
     if (this.lead.idade) {
-      if (this.lead.idade && this.lead.idade <= 55) {
+      if (this.lead.idade && this.lead.idade < 55) {
         this.lead.status = 'NÃO APTO';
         console.log('idade: ' + this.lead.idade);
         return;
