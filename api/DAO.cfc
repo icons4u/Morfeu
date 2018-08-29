@@ -109,9 +109,11 @@
         status = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.status#"/>,
         data_contato = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#"/>,
         nascimento = <cfqueryparam cfsqltype="cf_sql_date" value="#VARIABLES.nascimento#"/>,
-        peso = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.peso#"/>,
-        altura = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.altura#"/>,
-        imc = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.imc#"/>,
+        <cfif len(VARIABLES.imc) GT 0>
+          peso = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.peso#"/>,
+          altura = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.altura#"/>,
+          imc = <cfqueryparam cfsqltype="cf_sql_numeric" value="#VARIABLES.imc#"/>,
+        </cfif>
         <cfif Len(trim(VARIABLES.insonia)) GT 0>insonia = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.insonia)#"/>,</cfif>
         <cfif Len(trim(VARIABLES.iniciar_sono)) GT 0>iniciar_sono = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.iniciar_sono)#"/>,</cfif>
         <cfif Len(trim(VARIABLES.manter_sono)) GT 0>manter_sono = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.manter_sono)#"/>,</cfif>
