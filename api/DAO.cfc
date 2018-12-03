@@ -9,6 +9,43 @@
   <cfheader name="Access-Control-Allow-Origin" value="*"/>
   <cfheader name="Content-Type" value="application/json"/>
 
+  <cffunction name="getUsers" access="remote" output="false" returnformat="plain" returntype="string">
+
+    <cfargument name="token" type="string" default=""/>
+
+    <cfset returnObject = CreateObject("component", "ReturnObject")/>
+
+    <cfif ARGUMENTS.token NEQ "jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23">
+      <cfset returnObject["status"]["mensagem"] = "Token invalido"/>
+      <cfset returnObject["status"]["erro"] = true/>
+      <cfset returnObject["status"]["codErro"] = 99/>
+      <cfreturn SerializeJSON(returnObject)/>
+    </cfif>
+
+    <cfquery name="qRetorno">
+      SELECT users.*
+      FROM ache.tb_morfeu_users as users
+      ORDER BY nomeUser
+    </cfquery>
+
+    <cfif qRetorno.recordCount>
+      <cfset arrayVO = ArrayNew(1)/>
+      <cfloop query="qRetorno">
+        <cfset obj = CreateObject("component", "Objeto")/>
+        <cfset obj["idUser"] = qRetorno.idUser/>
+        <cfset obj["nomeUser"] = qRetorno.nomeUser/>
+        <cfset arrayVO[CurrentRow] = obj/>
+      </cfloop>
+      <cfset returnObject["data"] = arrayVO/>
+    <cfelse>
+      <cfset returnObject["status"]["mensagem"] = "Dados Inexistentes"/>
+      <cfset returnObject["status"]["erro"] = true/>
+      <cfset returnObject["status"]["codErro"] = 1/>
+    </cfif>
+
+    <cfreturn SerializeJSON(returnObject)/>
+
+  </cffunction>
 
   <!--- PACIENTE --->
 
@@ -29,6 +66,7 @@
       <cfset VARIABLES.POST = deserializeJSON(ToString(getHTTPRequestData().content)) />
       <cfset VARIABLES.lead_id = VARIABLES.POST.lead_id/>
       <cfset VARIABLES.observacoes = VARIABLES.POST.observacoes/>
+      <cfset VARIABLES.status = VARIABLES.POST.status/>
       <cfcatch type="any">
         <cfset vo = CreateObject("component", "ReturnObject")/>
         <cfset vo["status"]["mensagem"] = "Dados incorretos, não consegui gravar."/>
@@ -41,8 +79,7 @@
       <cfquery name="qUpdate" result="queryResult">
         UPDATE ache.tb_morfeu_lead as lead
         SET
-        status = <cfqueryparam cfsqltype="cf_sql_varchar" value="tentar novamente"/>,
-        data_contato = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#"/>,
+        status = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.status#"/>,
         observacoes = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.observacoes#"/>
         WHERE lead_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#VARIABLES.lead_id#"/>
       </cfquery>
@@ -146,6 +183,7 @@
   <cffunction name="getLead" access="remote" output="false" returnformat="plain" returntype="string">
 
     <cfargument name="token" type="string" default=""/>
+    <cfargument name="idUser" type="numeric" default="" required="true"/>
 
     <cfset returnObject = CreateObject("component", "ReturnObject")/>
 
@@ -164,9 +202,12 @@
       ORDER BY data_contato, lead_id
       LIMIT 1;
     </cfquery>
+
     <cfquery name="qUpdate" result="queryResult">
       UPDATE ache.tb_morfeu_lead
-      SET status = <cfqueryparam cfsqltype="cf_sql_varchar" value="ligando"/>
+      SET status = <cfqueryparam cfsqltype="cf_sql_varchar" value="ligando"/>,
+          atendente = <cfqueryparam cfsqltype="cf_sql_integer" value="#ARGUMENTS.idUser#"/>,
+          data_contato = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#"/>
       WHERE lead_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#qRetorno.lead_id#"/>
     </cfquery>
 

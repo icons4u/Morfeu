@@ -4,11 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
+import { LoginComponent } from './login/login.component';
+import { LigacaoComponent } from './ligacao/ligacao.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    LigacaoComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule

@@ -10,15 +10,41 @@ export class AppComponent  implements OnInit {
 
   lead: any = {status:''};
   arrLeads: any = [];
+  arrUsers: any = [];
   statusStage: number = 0;
+  atendenteID: number = 0;
+  showLead: boolean = true;
 
   constructor(private http: HttpClient) {
     // constructor
   }
 
   ngOnInit() {
-    this.getLead();
-    this.getToReturnLeads();
+    this.getUsers();
+  }
+
+  getUsers() {
+    this.http.get('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=getUsers&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23')
+      .subscribe(data => {
+        console.log('users:' + JSON.stringify(data));
+        if (!data['status'].erro) {
+          this.arrUsers = data['data'];
+          window.scrollTo(0,0);
+        }
+      });
+  }
+
+  iniciaAtendimento(atendente) {
+    console.log('atendente:' + atendente);
+    if (atendente == 0) {
+      this.showLead = true;
+      return;
+    } else {
+      this.showLead = false;
+      this.atendenteID = atendente;
+      this.getLead();
+      this.getToReturnLeads();
+    }
   }
 
   calcIdade(nascimento) {
@@ -146,7 +172,8 @@ export class AppComponent  implements OnInit {
   }
 
   getLead() {
-    this.http.get('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=getLead&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23')
+    console.log('getLead | Atendente: ' + this.atendenteID);
+    this.http.get('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=getLead&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23&idUser=' + this.atendenteID)
       .subscribe(data => {
         console.log(JSON.stringify(data));
         if (!data['status'].erro) {
@@ -180,9 +207,17 @@ export class AppComponent  implements OnInit {
       });
   }
 
-  nextLead() {
+  nextLead(status) {
+
+    if (status == '') {
+      return;
+    } else {
+      this.lead.status = status;
+    }
+
     const params = JSON.stringify(this.lead);
     console.log(JSON.stringify(this.lead));
+
     this.http.post('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=nextLead&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23', params)
       .subscribe(data => {
         if (!data['status'].erro) {

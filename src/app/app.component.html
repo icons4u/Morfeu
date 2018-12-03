@@ -15,20 +15,24 @@
 
 <div class="container" style="padding-top: 20px;">
 
-  <div class="row">
+  <div class="row topo">
 
-    <table class="table table-bordered table-hover table-sm">
-      <tr *ngFor="let lead of arrLeads; let i = index;" (click)="setLead(lead)">
-        <td>{{lead.nome}}</td>
-        <td>{{lead.observacoes}}</td>
-        <td>{{lead.data_contato | date: 'dd/MM'}}</td>
-      </tr>
-    </table>
+    <div class="col-md-8">
+      <h2>PROJETO MORFEU</h2>
+    </div>
+
+    <div class="form-group col-md-4">
+      <select #selectedUser class="form-control" (change)="iniciaAtendimento(selectedUser.value)">
+        <option value="0" selected>Selecione um usuário...</option>
+        <option *ngFor="let user of arrUsers;" [value]="user.idUser">{{user.nomeUser}}</option>
+      </select>
+    </div>
 
   </div>
 
-  <div class="row">
+  <br/>
 
+  <div class="row" [hidden]="showLead">
 
     <!-- RESUMO -->
 
@@ -36,14 +40,25 @@
 
       <br/>
 
-      <h3 class="mb-3">Projeto Morfeu</h3>
-
       <h4 class="mb-3">{{lead.nome}}</h4>
       <p class="mb-3">Cel: {{lead.celular}}</p>
       <p class="mb-3">Res: {{lead.telefone}}</p>
       <p class="mb-3">Com: {{lead.telefone2}}</p>
 
-      <button class="btn btn-default btn-block" type="button" (click)="nextLead()">Próximo lead</button>
+      <div class="form-group col-md-12">
+        <select #statusAtendimento class="form-control">
+          <option value="" selected>Selecione um status...</option>
+          <option value="APTO">APTO</option>
+          <option value="NAO APTO">NÃO APTO</option>
+          <option value="SEM INTERESSE">SEM INTERESSE</option>
+          <option value="NAO ATENDE">NÃO ATENDE</option>
+          <option value="ENGANO">ENGANO</option>
+          <option value="FALECIDO">FALECIDO</option>
+          <option value="SEM DADOS">SEM DADOS</option>
+        </select>
+      </div>
+
+      <button class="btn btn-default btn-block" type="button" (click)="nextLead(statusAtendimento.value)">Próximo lead</button>
 
       <hr class="mb-4">
 
@@ -293,6 +308,18 @@
 
     </div>
 
+
+  </div>
+
+  <div class="row">
+
+    <table class="table table-bordered table-hover table-sm">
+      <tr *ngFor="let lead of arrLeads; let i = index;" (click)="setLead(lead)">
+        <td>{{lead.nome}}</td>
+        <td>{{lead.observacoes}}</td>
+        <td>{{lead.data_contato | date: 'dd/MM'}}</td>
+      </tr>
+    </table>
 
   </div>
 
