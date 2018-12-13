@@ -197,7 +197,8 @@
     <cfquery name="qRetorno">
       SELECT lead.*
       FROM ache.tb_morfeu_lead as lead
-      WHERE lead.status IS NULL
+      WHERE lead.status IN ('RETORNAR', 'NAO ATENDE', '')
+            AND lead.observacoes like '%** FASE %'
       --WHERE lead.observacoes = 'Sem contato' OR lead.observacoes = 'Sem contatos'
       ORDER BY data_contato, lead_id
       LIMIT 1;
