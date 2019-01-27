@@ -131,6 +131,8 @@
       <cfset VARIABLES.alcool_drogas = VARIABLES.POST.alcool_drogas/>
       <cfset VARIABLES.interesse = VARIABLES.POST.interesse/>
       <cfset VARIABLES.observacoes = VARIABLES.POST.observacoes/>
+      <cfset VARIABLES.uf = VARIABLES.POST.uf/>
+      <cfset VARIABLES.centro_pesquisa = VARIABLES.POST.centro_pesquisa/>
       <!---cfcatch type="any">
         <cfset vo = CreateObject("component", "ReturnObject")/>
         <cfset vo["status"]["mensagem"] = "Dados incorretos, não consegui gravar."/>
@@ -165,7 +167,9 @@
         <cfif Len(trim(VARIABLES.imc_alto)) GT 0>imc_alto = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.imc_alto)#"/>,</cfif>
         <cfif Len(trim(VARIABLES.alcool_drogas)) GT 0>alcool_drogas = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.alcool_drogas)#"/>,</cfif>
         <cfif Len(trim(VARIABLES.interesse)) GT 0>interesse = <cfqueryparam cfsqltype="cf_sql_bit" value="#YesNoFormat(VARIABLES.interesse)#"/>,</cfif>
-        observacoes = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.observacoes#"/>
+        observacoes = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.observacoes#"/>,
+        uf = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.uf#"/>,
+        centro_pesquisa = <cfqueryparam cfsqltype="cf_sql_varchar" value="#VARIABLES.centro_pesquisa#"/>
         WHERE lead_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#VARIABLES.lead_id#"/>
       </cfquery>
       <cfset returnObject["data"] = true/>
@@ -197,8 +201,8 @@
     <cfquery name="qRetorno">
       SELECT lead.*
       FROM ache.tb_morfeu_lead as lead
-      WHERE lead.status IN ('2X SEM SUCESSO')
-            AND lead.observacoes like '%** FASE 3%'
+      WHERE lead.status IS NULL
+            AND lead.observacoes like '%** FASE 5%'
       --WHERE lead.observacoes = 'Sem contato' OR lead.observacoes = 'Sem contatos'
       ORDER BY data_contato, lead_id
       LIMIT 1;
@@ -241,6 +245,8 @@
         <cfset obj["alcool_drogas"] = qRetorno.alcool_drogas/>
         <cfset obj["interesse"] = qRetorno.interesse/>
         <cfset obj["observacoes"] = qRetorno.observacoes/>
+        <cfset obj["uf"] = qRetorno.uf/>
+        <cfset obj["centro_pesquisa"] = qRetorno.centro_pesquisa/>
         <cfset returnObject["data"] = obj/>
     <cfelse>
       <cfset returnObject["status"]["mensagem"] = "Dados Inexistentes"/>
@@ -304,6 +310,8 @@
         <cfset obj["alcool_drogas"] = qRetorno.alcool_drogas/>
         <cfset obj["interesse"] = qRetorno.interesse/>
         <cfset obj["observacoes"] = qRetorno.observacoes/>
+        <cfset obj["uf"] = qRetorno.uf/>
+        <cfset obj["centro_pesquisa"] = qRetorno.centro_pesquisa/>
         <cfset arrayVO[CurrentRow] = obj/>
       </cfloop>
       <cfset returnObject["data"] = arrayVO/>
