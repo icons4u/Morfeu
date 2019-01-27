@@ -195,7 +195,8 @@ export class AppComponent  implements OnInit {
 
   saveLead() {
     const params = JSON.stringify(this.lead);
-    //console.log(JSON.stringify(this.lead));
+    console.log(JSON.stringify(this.lead));
+
     this.http.post('http://api.icons4u.com.br/morfeu/api/DAO.cfc?method=editLead&token=jf8w3ynr73840rync848udq07yrc89q2h4nr08ync743c9r8h328f42fc8n23', params)
       .subscribe(data => {
         if (!data['status'].erro) {

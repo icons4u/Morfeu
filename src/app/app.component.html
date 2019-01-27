@@ -120,8 +120,8 @@
 
         <div class="d-block my-3">
           <div>
-            <select #uf class="form-control" [(ngModel)]="lead.uf">
-              <option value="" selected>Selecione um Estado...</option>
+            <select #uf name="uf" class="form-control" [(ngModel)]="lead.uf">
+              <option value="">Selecione um Estado...</option>
               <option value="SP">SP</option>
               <option value="AC">AC</option>
               <option value="AL">AL</option>
@@ -160,8 +160,8 @@
 
         <div class="d-block my-3">
           <div>
-            <select #centro_pesquisa class="form-control" [(ngModel)]="lead.centro_pesquisa">
-              <option value="" selected>Selecione um Centro de Pesquisa...</option>
+            <select #centro_pesquisa name="centro_pesquisa" class="form-control" [(ngModel)]="lead.centro_pesquisa">
+              <option value="">Selecione um Centro de Pesquisa...</option>
               <option value="CDEC - SP - Vila Mariana">CDEC - SP - Vila Mariana</option>
               <option value="Dr Consulta - SP  - Barra Funda">Dr Consulta - SP  - Barra Funda</option>
               <option value="Allergisa - SP - Campinas">Allergisa - SP - Campinas</option>
